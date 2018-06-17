@@ -1,0 +1,17 @@
+{
+    "name": "domotruc/mqttgen",
+    "description": "Generator of MQTT flow, for instance for test purpose.",
+    "type": "library",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "domotruc",
+            "email": "domotruc@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+	"bin": [
+        "mqttgen"
+	]
+}
