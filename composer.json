@@ -10,7 +10,12 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {},
+    "require": {
+		"php": "^7.0"
+	},
+	"autoload": {
+        "psr-4": {"MqttGen\\": "src/"}
+    }
 	"bin": [
         "mqttgen"
 	]
