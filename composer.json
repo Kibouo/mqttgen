@@ -1,6 +1,6 @@
 {
     "name": "domotruc/mqttgen",
-    "description": "Generator of MQTT flow, for instance for test purpose.",
+    "description": "MQTT message flow generator",
     "type": "library",
     "license": "AGPL-3.0",
     "authors": [
@@ -11,12 +11,13 @@
     ],
     "minimum-stability": "stable",
     "require": {
-		"php": "^7.0"
-	},
-	"autoload": {
+	"php": "^7.0",
+        "monolog/monolog": "^1.23"
+    },
+    "autoload": {
         "psr-4": {"MqttGen\\": "src/"}
     },
-	"bin": [
+    "bin": [
         "mqttgen"
-	]
+    ]
 }
