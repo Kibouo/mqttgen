@@ -19,13 +19,15 @@ Usage
 
 ### As a standalone application
 
-Execute the following:
+Execute the following from the directory containing the `composer.json` file:
 
 ```bash
 vendor/bin/mqttgen vendor/domotruc/mqttgen/topics.json
 ```
 
 ### As a library
+
+Following file is assumed to be in the same directory as your `composer.json` file.
 
 ```php
 <?php
@@ -87,7 +89,7 @@ Then:
 mosquitto_pub -t 'boiler/hw/setpoint/set' -m '65'
 ```
 
-updated the internal *MqttGen* setpoint value. Sending again the get message:
+updates the internal *MqttGen* setpoint value. Sending again the get message:
 
 ```bash
 mosquitto_pub -t 'boiler/hw/setpoint/get' -m ''
