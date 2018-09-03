@@ -13,6 +13,9 @@
 	"#": "60s by default",
 	"keepalive": 10,
 
+        "#": "QoS (1 by default)",
+        "qos": 2,
+
 	"#": "Following variables allow to specify a will message",
 	"#": "willTopic: shall not be empty (no will message si set if undefined or empty)",
 	"#": "willMessage: the message to send as a will (a zero lenght message is sent if undefined or empty)",

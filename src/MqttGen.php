@@ -48,6 +48,9 @@ class MqttGen {
     // Timer interval between messages
     private $time_interval;
 
+    // Publication QoS
+    private $qos;
+
     // MQTT client
     private $client;
 
@@ -107,7 +110,10 @@ class MqttGen {
         $mqtt_cnfg = isset($json[self::S_MQTT]) ? $json[self::S_MQTT] : Array();
 	$this->connectMqtt($mqtt_cnfg);
 
-	# Parse and check all messages:
+        // Get QoS
+        $this->qos = self::arrayValue($mqtt_cnfg, 'qos', 1);
+
+        # Parse and check all messages:
         #   . check presence of S_TOPIC and S_PAYLOAD at first level
         #   . call check_suscribe_topic for each topic
 	$this->logger->info('check messages definition and subscribe topics');
@@ -292,7 +298,7 @@ class MqttGen {
             if (is_array($pl_dump))
                 $pl_dump = json_encode($pl_dump);
 	    $this->logger->info('-> ' . $gen_data[self::S_TOPIC] . ' ' . $pl_dump);
-	    $this->client->publish($gen_data[self::S_TOPIC], $pl_dump, 1, $retain);
+	    $this->client->publish($gen_data[self::S_TOPIC], $pl_dump, $this->qos, $retain);
 	}
 	else
 	    $gen_data = null;
