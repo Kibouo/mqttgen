@@ -288,7 +288,9 @@ class MqttGen {
 	$sync   = array_key_exists(self::S_SYNC, $msg) ? $msg[self::S_SYNC] : true;
 
 	if ($sync || $is_async) {
-	    $pl_dump = json_encode($gen_data[self::S_PAYLOAD]);
+            $pl_dump = $gen_data[self::S_PAYLOAD];
+            if (is_array($pl_dump))
+                $pl_dump = json_encode($pl_dump);
 	    $this->logger->info('-> ' . $gen_data[self::S_TOPIC] . ' ' . $pl_dump);
 	    $this->client->publish($gen_data[self::S_TOPIC], $pl_dump, 1, $retain);
 	}
