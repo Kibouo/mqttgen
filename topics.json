@@ -1,180 +1,225 @@
 {
     "mqtt": {
-        "#" : "To define connexion parameters. If omitted locahost:1883 is used.",
+        "#": "To define connexion parameters. If omitted locahost:1883 is used.",
         "host": "localhost",
         "port": 1883,
-
-        "#" : "To define credential to connect to the MQTT broker. If omitted or empty, no credential is used.",
+        "#": "To define credential to connect to the MQTT broker. If omitted or empty, no credential is used.",
         "username": "",
         "password": "",
-
-	"#": "keepalive: maximum period in seconds allowed between communications with the broker. If no other messages",
-	"#": "are being exchanged, this controls the rate at which the client will send ping messages to the broker.",
-	"#": "60s by default",
-	"keepalive": 10,
-
+        "#": "keepalive: maximum period in seconds allowed between communications with the broker. If no other messages",
+        "#": "are being exchanged, this controls the rate at which the client will send ping messages to the broker.",
+        "#": "60s by default",
+        "keepalive": 10,
         "#": "QoS (1 by default)",
         "qos": 2,
-
-	"#": "Following variables allow to specify a will message",
-	"#": "willTopic: shall not be empty (no will message si set if undefined or empty)",
-	"#": "willMessage: the message to send as a will (a zero lenght message is sent if undefined or empty)",
-	"#": "willQos: the quality of service level to use for the will (0 if undefined or empty)",
-	"#": "willRetain: specifies if the will message is retained, true or false (false if undefined or not true)",
-	"willTopic": "boiler/status",
-	"willMessage": "offline",
-	"willQoS": 0,
-	"willRetain": true
+        "#": "Following variables allow to specify a will message",
+        "#": "willTopic: shall not be empty (no will message si set if undefined or empty)",
+        "#": "willMessage: the message to send as a will (a zero lenght message is sent if undefined or empty)",
+        "#": "willQos: the quality of service level to use for the will (0 if undefined or empty)",
+        "#": "willRetain: specifies if the will message is retained, true or false (false if undefined or not true)",
+        "willTopic": "boiler/status",
+        "willMessage": "offline",
+        "willQoS": 0,
+        "willRetain": true
     },
-
     "misc": {
-	"#": "time interval between each publication",
+        "#": "time interval between each publication",
         "time_interval": 2,
-
-	"#": "logging level",
-	"#": "0=notset, 100=debug, 200=info, 300=warning, 400=error",
+        "#": "logging level",
+        "#": "0=notset, 100=debug, 200=info, 300=warning, 400=error",
         "logging_level": 200,
-
-	"#": "logging_file: to log into a file",
-	"#": "if missing or empty string, logs are printed on the console",
-	"logging_file": ""
+        "#": "logging_file: to log into a file",
+        "#": "if missing or empty string, logs are printed on the console",
+        "logging_file": ""
     },
-
     "messages": {
-	"st": {
-	    "topic": "boiler/status",
-	    "payload": "online",
-
+        "st": {
+            "topic": "boiler/status",
+            "payload": "online",
             "#": "once: to send the message once at starting (false by default)",
             "once": true,
-
-	    "#" : "to set retain mode (false by default)",
-	    "retain" : true
-	},
-	"br": {
-	    "topic": "boiler/brand",
-	    "payload": "undisclosed brand"
-	},
-	"uptime": {
-	    "topic": "boiler/uptime",
-	    "payload": {"func": "linear", "param": { "cur": 94000, "delta": 2 }}
-	},
-	"date" : {
-	    "topic": "boiler/date",
-	    "payload": {
-		"time": {
-		    "value": {
+            "#": "to set retain mode (false by default)",
+            "retain": true
+        },
+        "br": {
+            "topic": "boiler/brand",
+            "payload": "undisclosed brand"
+        },
+        "uptime": {
+            "topic": "boiler/uptime",
+            "payload": {
+                "func": "linear",
+                "param": {
+                    "cur": 94000,
+                    "delta": 2
+                }
+            }
+        },
+        "date": {
+            "topic": "boiler/date",
+            "payload": {
+                "time": {
+                    "value": {
                         "#": "see formatting options of the php date function",
-			"func": "date",
-			"param": { "fmt": "H:i:s" }
-		    }
-		},
-		"date": {
-		    "value": {
-			"func": "date",
-			"param": { "fmt": "d.m.Y" }
-		    }
-		}
-	    }
-	},
-	"ping": {
-	    "topic": "boiler/ping",
-	    "payload": {
-		"func": "nextChoice",
-		"#": "last: index of the last published element (optional)",
-		"param": {"last": 1, "list": ["ping", "pong"]}
-	    }
-	},
-	"cb": {
-	    "topic": "boiler/burner",
-	    "payload": {
-		"func": "randChoice",
-		"param": ["off", "on"]
-	    }
-	},
-	"ct": {
-	    "topic": "boiler/temp",
-	    "payload": {
-		"func": "triangleWave",
-		"param": { "cur": 90, "delta": -0.5 , "min": 50, "max": 90 }
-	    }
-	},
-	"ce": {
-	    "topic": "boiler/ext_temp",
-	    "payload": {
-		"func": "randWalk",
-		"#": "min and max are optionals",
-		"param": { "cur": 20, "rand": 0.3, "min": 10, "max": 30 }
-	    }
-	},
-	"ets1": {
-	    "topic": "boiler/hw/setpoint",
-
-	    "#": "it shall be published only when receceiving the following get message",
-	    "get": "boiler/hw/setpoint/get",
-
-	    "#": "sync: false to specify that the message shall not be published on a time period basis",
-	    "#": "      true by default. payload is computed whatever the value of sync.",
-	    "sync": false,
-
-	    "payload": {
-		"func": "constant",
-                
-		"#": "set: to specify a message subscribed by mqttgen",
+                        "func": "date",
+                        "param": {
+                            "fmt": "H:i:s"
+                        }
+                    }
+                },
+                "date": {
+                    "value": {
+                        "func": "date",
+                        "param": {
+                            "fmt": "d.m.Y"
+                        }
+                    }
+                }
+            }
+        },
+        "ping": {
+            "topic": "boiler/ping",
+            "payload": {
+                "func": "nextChoice",
+                "#": "last: index of the last published element (optional)",
+                "param": {
+                    "last": 1,
+                    "list": [
+                        "ping",
+                        "pong"
+                    ]
+                }
+            }
+        },
+        "cb": {
+            "topic": "boiler/burner",
+            "payload": {
+                "func": "randChoice",
+                "param": [
+                    "off",
+                    "on"
+                ]
+            }
+        },
+        "ct": {
+            "topic": "boiler/temp",
+            "payload": {
+                "func": "triangleWave",
+                "param": {
+                    "cur": 90,
+                    "delta": -0.5,
+                    "min": 50,
+                    "max": 90
+                }
+            }
+        },
+        "ce": {
+            "topic": "boiler/ext_temp",
+            "payload": {
+                "func": "randWalk",
+                "#": "min and max are optionals",
+                "param": {
+                    "cur": 20,
+                    "rand": 0.3,
+                    "min": 10,
+                    "max": 30
+                }
+            }
+        },
+        "ets1": {
+            "topic": "boiler/hw/setpoint",
+            "#": "it shall be published only when receceiving the following get message",
+            "get": "boiler/hw/setpoint/get",
+            "#": "sync: false to specify that the message shall not be published on a time period basis",
+            "#": "      true by default. payload is computed whatever the value of sync.",
+            "sync": false,
+            "payload": {
+                "func": "constant",
+                "#": "set: to specify a message subscribed by mqttgen",
                 "#": "     each time message boiler/hw/setpoint/set is received, the cur value is updated",
-		"#": "     with the payload value.",
+                "#": "     with the payload value.",
                 "set:boiler/hw/setpoint/set": "cur",
-
-		"param": { "cur": 50 }
-	    }
-	},
-
-	"ets2": {
-	    "topic": "boiler/hw/temp",
-	    "payload": {
-		"func": "triangleWave",
-		"param": { "cur": 50, "delta": 0.5, "min": 45, "max": 55 }
-	    }
-	},
-
-	"boiler": {
-	    "topic": "boiler/info",
-	    "payload": {
-		"device": "ESP32"
-	    }
-	},
-
-	"esp2": {
-	    "topic": "boiler/temperatures",
-	    "payload": {
-		"device": "tronic",
-		"#": "comment",
-		"sensorType": "Temperature",
-		"values": [{
-		    "func": "randWalk",
-		    "param": { "cur": 10, "rand": 0.3, "min": -10, "max": 30 }
-		},{
-		    "func": "randWalk",
-		    "param": { "cur": 85, "rand": 0.2, "min": 70, "max": 90 }
-		},{
-		    "func": "randWalk",
-		    "param": { "cur": 22, "rand": 0.3, "min": 15, "max": 25 }
-		}]
-	    }
-	},
-	"so6": {
-	    "topic": "boiler/power",
-	    "payload": {
-		"func": "randGauss",
-		"param": { "mean": 1, "sigma": 0.1 }
-	    }
-	},
-	"so7": {
-	    "topic": "boiler/lux",
-	    "payload": {
-		"func": "randUniform",
-		"param": { "min": 1000, "max": 1200 }
-	    }
-	}
+                "param": {
+                    "cur": 50
+                }
+            }
+        },
+        "ets2": {
+            "topic": "boiler/hw/temp",
+            "payload": {
+                "func": "triangleWave",
+                "param": {
+                    "cur": 50,
+                    "delta": 0.5,
+                    "min": 45,
+                    "max": 55
+                }
+            }
+        },
+        "boiler": {
+            "topic": "boiler/info",
+            "payload": {
+                "device": "ESP32"
+            }
+        },
+        "esp2": {
+            "topic": "boiler/temperatures",
+            "payload": {
+                "device": "tronic",
+                "#": "comment",
+                "sensorType": "Temperature",
+                "values": [
+                    {
+                        "func": "randWalk",
+                        "param": {
+                            "cur": 10,
+                            "rand": 0.3,
+                            "min": -10,
+                            "max": 30
+                        }
+                    },
+                    {
+                        "func": "randWalk",
+                        "param": {
+                            "cur": 85,
+                            "rand": 0.2,
+                            "min": 70,
+                            "max": 90
+                        }
+                    },
+                    {
+                        "func": "randWalk",
+                        "param": {
+                            "cur": 22,
+                            "rand": 0.3,
+                            "min": 15,
+                            "max": 25
+                        }
+                    }
+                ]
+            }
+        },
+        "so6": {
+            "topic": "boiler/power",
+            "payload": {
+                "func": "randGauss",
+                "param": {
+                    "mean": 1,
+                    "sigma": 0.1
+                }
+            }
+        },
+        "so7": {
+            "topic": "boiler/lux",
+            "payload": {
+                "func": "randUniform",
+                "param": {
+                    "min": 1000,
+                    "max": 1200,
+                    "#": "precision (optional, 2 by default)",
+                    "precision": 6
+                }
+            }
+        }
     }
 }

@@ -57,8 +57,8 @@ class MqttGenFunc {
     }
 
     static public function randUniform(array &$param) {
-		$r = self::random($param['min'], $param['max']);
-		return round($r, 2);
+	$r = self::random($param['min'], $param['max']);
+	return round($r, array_key_exists('precision', $param) ? $param['precision'] : 2);
     }
 
     static public function randGauss(array &$param) {
