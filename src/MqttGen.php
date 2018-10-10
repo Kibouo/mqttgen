@@ -313,8 +313,8 @@ class MqttGen {
      * Function definition are defined by a JSON array having FUN and PAR keys.
      * This function is called recursively to support multi level JSON structures.
      *
-     * @param $key JSON key of the given data structure
-     * @param $data JSON data array or value
+     * @param $key string JSON key of the given data structure
+     * @param $data array JSON data array or value
      * @return array generated data
      */
     protected function generateValues($key, &$data) {
@@ -385,7 +385,7 @@ class MqttGen {
 
 	    foreach ($data as $i => &$value) {
 		if ($i === self::S_TOPIC) {
-		    $this->checkTopicUnicity($value);
+//		    $this->checkTopicUnicity($value);
 		}
 		else if ($i === self::S_GET) {
 		    $this->checkTopicUnicity($value);
