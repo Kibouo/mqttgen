@@ -91,8 +91,7 @@ class MqttGen {
      * . Connect to the broker
      *
      * @throw Exception in case of fatal error
-     * @param $filename JSON
-     *            input filename
+     * @param string $filename JSON input filename
      */
     function __construct(string $filename) {
         if (! file_exists($filename))
@@ -166,8 +165,7 @@ class MqttGen {
      * Mosquitto callback called each time a subscribed topic is dispatched by the broker.
      * Process S_SET and S_GET commands.
      *
-     * @param $msg dispatched
-     *            message
+     * @param Mosquitto\Message $msg dispatched message
      */
     public function mosquittoMessage($msg) {
         $topic = $msg->topic;
@@ -259,8 +257,7 @@ class MqttGen {
     /**
      * Connect to the MQTT broker using given configuration parameter
      *
-     * @param $mqtt_cnfg configuration
-     *            parameters
+     * @param array $mqtt_cnfg configuration parameters
      */
     protected function connectMqtt(array $mqtt_cnfg) {
 
@@ -303,13 +300,10 @@ class MqttGen {
     /**
      * Generate and publish the given message
      *
-     * @param $key JSON
-     *            key of the given message structure
-     * @param $msg JSON
-     *            array defining the message
-     * @param $is_async true
-     *            to send the message whatever the value of S_SYNC
-     * @return array generated message (keys are S_TOPIC and S_PAYLOAD).
+     * @param string $key JSON key of the given message structure
+     * @param array $msg JSON array defining the message
+     * @param bool $is_async true to send the message whatever the value of S_SYNC
+     * @return array|null generated message (keys are S_TOPIC and S_PAYLOAD).
      *         null if nothing is published (sync is false)
      */
     protected function generateAndPublish(string $key, array &$msg, $is_async) {
@@ -379,8 +373,7 @@ class MqttGen {
     /**
      * Check MQTT topics are only defined once
      *
-     * @param $topic topic
-     *            to be checked
+     * @param string $topic topic to be checked
      * @throw Exception if topic already exists
      */
     protected function checkTopicUnicity(string $topic) {
@@ -393,10 +386,8 @@ class MqttGen {
     /**
      * Check message definition and subscribe to get and set related topics
      *
-     * @param $key key
-     *            of the given data structure
-     * @param $data JSON
-     *            data array or value
+     * @param string $key key of the given data structure
+     * @param array $data JSON data array or value
      */
     protected function checkMessageAndSuscribe(string $key, &$data) {
         $typ = gettype($data);
