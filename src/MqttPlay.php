@@ -140,8 +140,7 @@ class MqttPlay {
         }
         
         try {
-            $filename = substr($argv[1], 0, 1) == '/' ? $argv[1] : dirname($argv[0]) . '/' . $argv[1];
-            $mqttPlay = new MqttPlay($filename);
+            $mqttPlay = new MqttPlay($argv[1]);
                        
             // Do the real job here: infinite loop to publish messages
             while (($msg = $mqttPlay->nextMessage()) != null) {
