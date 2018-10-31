@@ -142,13 +142,15 @@ Following file is assumed to be in the same directory as your `composer.json` fi
 ```php
 <?php
 
+use  MqttPlay\MqttPlay;
+
 require __DIR__ . '/vendor/autoload.php';
 
 try {
-    $filename = 'vendor/domotruc/mqttgen/flow.json';
-    $mqttplay = new MqttGen\MqttPlay($filename, ' ', 'locahost', 1883, 1);
+    $filename = 'vendor/domotruc/mqttgen/flow.txt';
+    $mqttPlay = new MqttPlay($filename, ' ', 'localhost', 1883, 1);
     while (($msg = $mqttPlay->nextMessage()) != null) {
-        print($msg[self::S_TIME] . " " . $msg[self::S_TOPIC] . " " . $msg[self::S_PAYLOAD] . PHP_EOL);
+        print($msg[MqttPlay::S_TIME ] . " " . $msg[MqttPlay::S_TOPIC] . " " . $msg[MqttPlay::S_PAYLOAD] . PHP_EOL);
     }
 }
 catch (\Exception $e) {
