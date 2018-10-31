@@ -1,9 +1,13 @@
-MqttGen - Generation of MQTT messages
+MqttGen - Generation and replay of MQTT messages
 =====================================
 
-*MqttGen* is an MQTT message generator. Message to be generated are defined in a JSON input file.
+*MqttGen* is an MQTT message generator.
 
 *MqttGen* can be used to create MQTT message flow to test applications using the MQTT protocol. It was created to test the [jMQTT Jeedom plugin](https://github.com/domotruc/jMQTT).
+
+*MqttGen* comes with two tools:
+   * *mqttgen* which is a kind of MQTT simulator allowing to send and receive messages. Behaviour is defined in a JSON input file.
+   * *mqttplay* which allows to replay a MQTT flow previously recorded thanks to an MQTT client such as mosquitto_sub.
 
 Installation
 ------------
@@ -14,12 +18,16 @@ The recommended way to install *MqttGen* is through [Composer](http://getcompose
 composer require domotruc/mqttgen
 ```
 
-Usage
------
+Usage of mqttgen
+----------------
 
 ### As a standalone application
 
-Execute the following from the directory containing the `composer.json` file:
+```bash
+vendor/bin/mqttgen your_json_input_file.json
+```
+
+To run the provided example, execute the following from the directory containing the `composer.json` file:
 
 ```bash
 vendor/bin/mqttgen vendor/domotruc/mqttgen/topics.json
@@ -72,13 +80,13 @@ This file generates the following MQTT flows:
 2018-06-24 08:38:57.180 boiler/lux 1114.44
 ```
 
-It is also possible to interact with *MqttGen*. Given the `topics.json` example file, the following command:
+It is also possible to interact with *mqttgen*. Given the `topics.json` example file, the following command:
 
 ```bash
 mosquitto_pub -t 'boiler/hw/setpoint/get' -m ''
 ```
 
-makes *MqttGen* send the following message:
+makes *mqttgen* send the following message:
 
 ```
 2018-06-24 08:47:46.127 boiler/hw/setpoint 50
@@ -89,14 +97,61 @@ Then:
 mosquitto_pub -t 'boiler/hw/setpoint/set' -m '65'
 ```
 
-updates the internal *MqttGen* setpoint value. Sending again the get message:
+updates the internal *mqttgen* setpoint value. Sending again the get message:
 
 ```bash
 mosquitto_pub -t 'boiler/hw/setpoint/get' -m ''
 ```
 
-makes *MqttGen* send the following message:
+makes *mqttgen* send the following message:
 
 ```
 2018-06-24 08:47:46.127 boiler/hw/setpoint 65
+```
+
+Usage of mqttplay
+-----------------
+
+*mqttplay* allows to replay an MQTT flow previously recorded thanks to the following command:
+
+```bash
+mosquitto_sub -t "#" -v| xargs -d$'\n' -L1 bash -c 'date "+%T.%3N $0"' | tee flow.txt
+```
+
+which gives a file such as:
+
+```
+15:27:10.358 N/pvinverter/20/Ac/L1/Voltage {"value": 240.59999999999999}
+15:27:10.386 N/pvinverter/20/Ac/L1/Power {"value": 1821.8742186612658}
+15:27:10.415 N/pvinverter/20/Ac/L1/Energy/Forward {"value": 4272.6587533761876}
+15:27:10.496 N/pvinverter/20/Ac/L1/Current {"value": 3.9399999999999999}
+```
+
+### As a standalone application
+
+To run the provided example, execute the following from the directory containing the `composer.json` file:
+
+```bash
+vendor/bin/mqttplay vendor/domotruc/mqttgen/flow.txt
+```
+
+### As a library
+
+Following file is assumed to be in the same directory as your `composer.json` file.
+
+```php
+<?php
+
+require __DIR__ . '/vendor/autoload.php';
+
+try {
+    $filename = 'vendor/domotruc/mqttgen/flow.json';
+    $mqttplay = new MqttGen\MqttPlay($filename, ' ', 'locahost', 1883, 1);
+    while (($msg = $mqttPlay->nextMessage()) != null) {
+        print($msg[self::S_TIME] . " " . $msg[self::S_TOPIC] . " " . $msg[self::S_PAYLOAD] . PHP_EOL);
+    }
+}
+catch (\Exception $e) {
+    print($e->getMessage() . PHP_EOL);
+}
 ```

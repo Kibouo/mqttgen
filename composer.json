@@ -1,23 +1,25 @@
 {
-    "name": "domotruc/mqttgen",
-    "description": "MQTT message flow generator",
-    "type": "library",
-    "license": "AGPL-3.0",
-    "authors": [
-        {
-            "name": "domotruc",
-            "email": "domotruc@gmail.com"
-        }
-    ],
-    "minimum-stability": "stable",
-    "require": {
-	"php": "^7.0",
-        "monolog/monolog": "^1.23"
-    },
-    "autoload": {
-        "psr-4": {"MqttGen\\": "src/"}
-    },
-    "bin": [
-        "mqttgen"
-    ]
+	"name" : "domotruc/mqttgen",
+	"description" : "MQTT message flow generator",
+	"type" : "library",
+	"license" : "AGPL-3.0",
+	"authors" : [{
+			"name" : "domotruc",
+			"email" : "domotruc@gmail.com"
+		}
+	],
+	"minimum-stability" : "stable",
+	"require" : {
+		"php" : "^7.0",
+		"monolog/monolog" : "^1.23"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"MqttGen\\" : "src/",
+			"MqttPlay\\" : "src/"
+		}
+	},
+	"bin" : [
+		"mqttgen"
+	]
 }

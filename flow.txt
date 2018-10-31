@@ -1,0 +1,4 @@
+  15:27:10.358 N/pvinverter/20/Ac/L1/Voltage {"value": 240.59999999999999}
+  15:27:10.386 N/pvinverter/20/Ac/L1/Power {"value": 1821.8742186612658}
+  15:27:10.415 N/pvinverter/20/Ac/L1/Energy/Forward {"value": 4272.6587533761876}
+  15:27:10.496 N/pvinverter/20/Ac/L1/Current {"value": 3.9399999999999999}
