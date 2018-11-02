@@ -148,7 +148,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 try {
     $filename = 'vendor/domotruc/mqttgen/flow.txt';
-    $mqttPlay = new MqttPlay($filename, ' ', 'localhost', 1883, 1);
+    $mqttPlay = new MqttPlay($filename, true, ' ', 'localhost', 1883, 1);
     while (($msg = $mqttPlay->nextMessage()) != null) {
         print($msg[MqttPlay::S_TIME ] . " " . $msg[MqttPlay::S_TOPIC] . " " . $msg[MqttPlay::S_PAYLOAD] . PHP_EOL);
     }

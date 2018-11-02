@@ -37,23 +37,25 @@ class MqttPlay {
      * @var float time at simulation start (unix timestamp with microseconds)
      */
     private $t0;
-    
+       
     /**
-     * @var string current message being treated
+     * @var boolean whether or not the simulation shall be time representative
      */
-    private $cur;
-    
-    
+    private $is_time_representative;
     
     /**
      * @param string $filename MQTT flow file
+     * @param bool $is_time_representative whether or not the simulation shall be time representative
      * @param string $delimiter flow file column separator (' ' by default)
      * @param string $host MQTT broker host (localhost by default)
      * @param int $port MQTT broker port (1883 by default)
      * @param int $qos MQTT publication QoS (1 by default) 
      * @throws \Exception in case of file reading the input file
      */
-    function __construct(string $filename, string $delimiter =' ', string $host='localhost', int $port=1883, int $qos=1) {
+    function __construct(string $filename, bool $is_time_representative=true, string $delimiter =' ', string $host='localhost', int $port=1883, int $qos=1) {
+        
+        $this->is_time_representative = $is_time_representative;
+        $this->qos = $qos;
         
         //
         // Read input file
@@ -76,24 +78,26 @@ class MqttPlay {
         fclose($fp);
         
         //
-        // Configure to the broker
+        // Configure the broker
         //
-        $this->qos = $qos;
         $this->client = new \Mosquitto\Client('mqttplay');
         $this->client->connect($host, $port);
     }
     
+
     /**
-     * Process, publish and return the next message.
+     * Process, publish and return the current message.
+     * Move the pointer to the next iteration if $advance_pointer is true.
      * Only one message is published.
      *
+     * @param bool $advance_pointer whether or not pointer shall be advance (true by default)
      * @return array|null published message (keys are S_TIME, S_TOPIC and S_PAYLOAD), null if work is ended
      *                    S_TIME is the elapsed time in s since the first message
      */
-    public function nextMessage() {
+    public function nextMessage($advance_pointer=true) {
         $msg = null;
         
-        if (!isset($this->t0)) {
+        if ($this->is_time_representative && !isset($this->t0)) {
             $this->t0 = microtime(true);
         }
 
@@ -101,27 +105,26 @@ class MqttPlay {
         //$last = end($this->data);
         
         // Check if work was ended
-        //if ($cur[0] == $last[0]) {
         if ($cur === false) {
             return null;
         }
         
-        $delta = $this->data[0][0]->diff($cur[0]);
-        $s = $delta->f + $delta->s +
-        + ($delta->i * 60)
-        + ($delta->h * 60 * 60)
-        + ($delta->d * 60 * 60 * 24)
-        + ($delta->m * 60 * 60 * 24 * 30)
-        + ($delta->y * 60 * 60 * 24 * 365);
-        $t = $this->t0 + $s;
-        if ($t > microtime(true)) {
-            time_sleep_until($t);
+        if ($this->is_time_representative) {
+            $delta = $this->data[0][0]->diff($cur[0]);
+            $s = $delta->f + $delta->s + + ($delta->i * 60) + ($delta->h * 60 * 60) + ($delta->d * 60 * 60 * 24) +
+                ($delta->m * 60 * 60 * 24 * 30) + ($delta->y * 60 * 60 * 24 * 365);
+            $t = $this->t0 + $s;
+            if ($t > microtime(true)) {
+                time_sleep_until($t);
+            }
         }
+        
         $this->client->publish($cur[1], $cur[2], $this->qos, false);
         $this->client->loop();
         
         // Advance the array pointer for the next iteration
-        next($this->data);
+        if ($advance_pointer)
+            next($this->data);
         
         return array(self::S_TIME => $s, self::S_TOPIC => $cur[1], self::S_PAYLOAD => $cur[2]);
     }
