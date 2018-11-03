@@ -118,6 +118,8 @@ class MqttPlay {
                 time_sleep_until($t);
             }
         }
+        else
+            $s = 0;
         
         $this->client->publish($cur[1], $cur[2], $this->qos, false);
         $this->client->loop();
