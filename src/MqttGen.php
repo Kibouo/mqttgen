@@ -154,14 +154,6 @@ class MqttGen {
     }
 
     /**
-     * Class destructor: disconnects the broker
-     */
-    function __destruct() {
-        $this->logger->debug('diconnecting from the MQTT broker');
-        $this->client->disconnect();
-    }
-
-    /**
      * Mosquitto callback called each time a subscribed topic is dispatched by the broker.
      * Process S_SET and S_GET commands.
      *
@@ -308,24 +300,23 @@ class MqttGen {
      */
     protected function generateAndPublish(string $key, array &$msg, $is_async) {
         $gen_data = $this->generateValues($key, $msg);
-
+        
         // Get retain and sync message parameters
         $retain = array_key_exists(self::S_RETAIN, $msg) ? $msg[self::S_RETAIN] : false;
         $sync = array_key_exists(self::S_SYNC, $msg) ? $msg[self::S_SYNC] : true;
-
+        
         if ($sync || $is_async) {
-            $pl_dump = $gen_data[self::S_PAYLOAD];
-            if (is_array($pl_dump))
-                $pl_dump = json_encode($pl_dump);
-            $this->logger->info('-> ' . $gen_data[self::S_TOPIC] . ' ' . $pl_dump);
-            $this->client->publish($gen_data[self::S_TOPIC], $pl_dump, $this->qos, $retain);
+            if (is_array($gen_data[self::S_PAYLOAD]))
+                $gen_data[self::S_PAYLOAD] = json_encode($gen_data[self::S_PAYLOAD]);
+                $this->logger->info('-> ' . $gen_data[self::S_TOPIC] . ' ' . $gen_data[self::S_PAYLOAD]);
+                $this->client->publish($gen_data[self::S_TOPIC], $gen_data[self::S_PAYLOAD], $this->qos, $retain);
         }
         else
             $gen_data = null;
-
-        $this->logger->debug('-----');
-
-        return $gen_data;
+            
+            $this->logger->debug('-----');
+            
+            return $gen_data;
     }
 
     /**
