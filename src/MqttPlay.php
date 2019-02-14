@@ -44,42 +44,28 @@ class MqttPlay {
     private $is_time_representative;
     
     /**
-     * @param string $filename MQTT flow file
+     * @param string|array $mqtt_flow MQTT flow data (filename or array)
      * @param bool $is_time_representative whether or not the simulation shall be time representative
-     * @param string $delimiter flow file column separator (' ' by default)
+     * @param string $delimiter flow file column separator (' ' by default). Useless if MQTT flow is passed as an array
      * @param string $host MQTT broker host (localhost by default)
      * @param int $port MQTT broker port (1883 by default)
      * @param int $qos MQTT publication QoS (1 by default) 
      * @throws \Exception in case of file reading the input file
      */
-    function __construct(string $filename, bool $is_time_representative=true, string $delimiter =' ', string $host='localhost', int $port=1883, int $qos=1) {
+    function __construct(string $mqtt_flow, bool $is_time_representative=true, string $delimiter=' ', string $host='localhost', int $port=1883, int $qos=1) {
         
         $this->is_time_representative = $is_time_representative;
         $this->qos = $qos;
         
-        //
-        // Read input file
-        //
-        if (! file_exists($filename))
-            throw new \Exception('File ' . $filename . ' does not exist');
-            
-        $fp = fopen($filename, "r");
-        if ($fp === false)
-            throw new \Exception('Read error in file  ' . $filename);
+        // Initialize MQTT data
+        if (is_string($mqtt_flow))
+            $this->readMqttFlowFile($mqtt_flow, $delimiter);
+        elseif (is_array($mqtt_flow))
+            $this->data = $mqtt_flow;
+        else
+            throw new \Exception('Incorrect MQTT flow type');
         
-        while (($line = fgets($fp)) !== false) {
-            $line = trim($line);
-            
-            if (count($cols = explode($delimiter, $line, 3)) == 3) {
-                $cols[0] = new \DateTime($cols[0]);
-                $this->data[] = $cols;
-            }
-        }
-        fclose($fp);
-        
-        //
         // Configure the broker
-        //
         $this->client = new \Mosquitto\Client('mqttplay');
         $this->client->connect($host, $port);
     }
@@ -160,5 +146,30 @@ class MqttPlay {
         
         echo 'Replay ended' . PHP_EOL;
         return 0;
+    }
+    
+    /**
+     * Read the MQTT flow file and initializer self::data
+     * @param string $filename
+     * @param string $delimiter
+     * @throws \Exception
+     */
+    private function readMqttFlowFile(string $filename, string $delimiter) {
+        if (! file_exists($filename))
+            throw new \Exception('File ' . $filename . ' does not exist');
+            
+        $fp = fopen($filename, "r");
+        if ($fp === false)
+            throw new \Exception('Read error in file  ' . $filename);
+            
+        while (($line = fgets($fp)) !== false) {
+            $line = trim($line);
+            
+            if (count($cols = explode($delimiter, $line, 3)) == 3) {
+                $cols[0] = new \DateTime($cols[0]);
+                $this->data[] = $cols;
+            }
+        }
+        fclose($fp);           
     }
 }

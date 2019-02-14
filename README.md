@@ -157,3 +157,30 @@ catch (\Exception $e) {
     print($e->getMessage() . PHP_EOL);
 }
 ```
+
+The MQTT flow can also be passed directly as an array, which gives:
+
+```php
+<?php
+
+use  MqttPlay\MqttPlay;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$mqtt_flow = array(
+    array('15:27:10.358', 'N/pvinverter/20/Ac/L1/Voltage', '{"value": 240.59999999999999}'),
+    array('15:27:10.386', 'N/pvinverter/20/Ac/L1/Power', '{"value": 1821.8742186612658}'),
+    array('15:27:10.415', 'N/pvinverter/20/Ac/L1/Energy/Forward', '{"value": 4272.6587533761876}'),
+    array('15:27:10.496', 'N/pvinverter/20/Ac/L1/Current', '{"value": 3.9399999999999999}')
+);
+
+try {
+    $mqttPlay = new MqttPlay($mqtt_flow, true, ' ', 'localhost', 1883, 1);
+    while (($msg = $mqttPlay->nextMessage()) != null) {
+        print($msg[MqttPlay::S_TIME ] . " " . $msg[MqttPlay::S_TOPIC] . " " . $msg[MqttPlay::S_PAYLOAD] . PHP_EOL);
+    }
+}
+catch (\Exception $e) {
+    print($e->getMessage() . PHP_EOL);
+}
+```
