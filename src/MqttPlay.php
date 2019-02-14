@@ -52,7 +52,7 @@ class MqttPlay {
      * @param int $qos MQTT publication QoS (1 by default) 
      * @throws \Exception in case of file reading the input file
      */
-    function __construct(string $mqtt_flow, bool $is_time_representative=true, string $delimiter=' ', string $host='localhost', int $port=1883, int $qos=1) {
+    function __construct($mqtt_flow, bool $is_time_representative=true, string $delimiter=' ', string $host='localhost', int $port=1883, int $qos=1) {
         
         $this->is_time_representative = $is_time_representative;
         $this->qos = $qos;
