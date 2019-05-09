@@ -91,15 +91,19 @@ class MqttGen {
      * . Connect to the broker
      *
      * @throw Exception in case of fatal error
-     * @param string $filename JSON input filename
+     * @param string $_filename JSON input filename
+     * @param array $_mqtt_cnfg
+     *   array allowing to override the 'mqtt' array of the JSON input filename. Resulting array is built merging
+     *   the 'mqtt' array of the JSON input filename (empty array if not present) and the given array (merge_array function
+     *   is used, $_mqtt_cnfg begin passed as 2nd parameter).
      */
-    function __construct(string $filename) {
-        if (! file_exists($filename))
-            throw new \Exception('File ' . $filename . ' does not exist');
+    function __construct(string $_filename, array $_mqtt_cnfg = array()) {
+        if (! file_exists($_filename))
+            throw new \Exception('File ' . $_filename . ' does not exist');
 
-        $json = json_decode(file_get_contents($filename), true);
+        $json = json_decode(file_get_contents($_filename), true);
         if (json_last_error() != JSON_ERROR_NONE)
-            self::throwJsonLastErrorException($filename);
+            self::throwJsonLastErrorException($_filename);
 
         $misc_cnfg = isset($json[self::S_MISC]) ? $json[self::S_MISC] : Array();
 
@@ -130,7 +134,7 @@ class MqttGen {
             $this->logErrorAndThrowException('no key "' . self::S_MESSAGES . '" specified in config, nothing to do');
 
         // Connect to the broker
-        $mqtt_cnfg = isset($json[self::S_MQTT]) ? $json[self::S_MQTT] : Array();
+        $mqtt_cnfg = array_merge(isset($json[self::S_MQTT]) ? $json[self::S_MQTT] : Array(), $_mqtt_cnfg);
         $this->connectMqtt($mqtt_cnfg);
 
         // Get QoS
