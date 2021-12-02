@@ -270,7 +270,7 @@ class MqttGen {
         $will_retain = self::arrayValue($mqtt_cnfg, "willRetain", False);
 
         $this->logger->debug("create the MQTT client");
-        $this->client = new \Mosquitto\Client(clientId);
+        $this->client = new \Mosquitto\Client($clientId);
 
         // Set the callback function
         $this->client->onMessage(array($this,'mosquittoMessage'));
