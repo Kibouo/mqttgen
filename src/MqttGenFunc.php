@@ -36,7 +36,7 @@ class MqttGenFunc {
 		$param['cur'] += self::random(-$param['rand'], $param['rand']);
 
 		if (array_key_exists('max', $param) && $param['cur'] > $param['max'])
-			$param['cur'] = param['max'];
+			$param['cur'] = $param['max'];
 		else if (array_key_exists('min', $param) && $param['cur'] < $param['min'])
 			$param['cur'] = $param['min'];
 
