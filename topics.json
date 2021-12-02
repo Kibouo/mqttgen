@@ -3,6 +3,8 @@
         "#": "To define connexion parameters. If omitted locahost:1883 is used.",
         "host": "localhost",
         "port": 1883,
+        "#": "Client ID is used to identify the client to the server. If omitted, 'mqttgen_' appended with the process ID is used.",
+        "clientId": "mqttgen_client_id_1",
         "#": "To define credential to connect to the MQTT broker. If omitted or empty, no credential is used.",
         "username": "",
         "password": "",

@@ -5,6 +5,7 @@
 import paho.mqtt.client as mqtt
 import json
 import copy
+import os
 import types
 import random
 import logging
@@ -125,6 +126,7 @@ def connect_mqtt(param):
     # Get mqtt section configuration parameters
     host = param.get("host", "localhost")
     port = param.get("port", 1883)
+    clientId = param.get("clientId", f"mqttgen_{os.getpid()}")
     username = param.get("username")
     password = param.get("password")
     keepalive = param.get("keepalive", 60)
@@ -134,7 +136,7 @@ def connect_mqtt(param):
     willRetain = param.get("willRetain", False)
 
     logging.debug("create the MQTT client")
-    client = mqtt.Client()
+    client = mqtt.Client(client_id=clientId)
 
     # Set callback function
     client.on_message = do_on_message

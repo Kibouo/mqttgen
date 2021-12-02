@@ -260,6 +260,7 @@ class MqttGen {
         // Get mqtt section configuration parameters
         $host = self::arrayValue($mqtt_cnfg, "host", "localhost");
         $port = self::arrayValue($mqtt_cnfg, "port", 1883);
+        $clientId = self::arrayValue($mqtt_cnfg, "clientId", "mqttgen_".getmypid());
         $username = self::arrayValue($mqtt_cnfg, "username");
         $password = self::arrayValue($mqtt_cnfg, "password");
         $keepalive = self::arrayValue($mqtt_cnfg, "keepalive", 60);
@@ -269,7 +270,7 @@ class MqttGen {
         $will_retain = self::arrayValue($mqtt_cnfg, "willRetain", False);
 
         $this->logger->debug("create the MQTT client");
-        $this->client = new \Mosquitto\Client('mqttgen');
+        $this->client = new \Mosquitto\Client(clientId);
 
         // Set the callback function
         $this->client->onMessage(array($this,'mosquittoMessage'));
@@ -304,11 +305,11 @@ class MqttGen {
      */
     protected function generateAndPublish(string $key, array &$msg, $is_async) {
         $gen_data = $this->generateValues($key, $msg);
-        
+
         // Get retain and sync message parameters
         $retain = array_key_exists(self::S_RETAIN, $msg) ? $msg[self::S_RETAIN] : false;
         $sync = array_key_exists(self::S_SYNC, $msg) ? $msg[self::S_SYNC] : true;
-        
+
         if ($sync || $is_async) {
             if (is_array($gen_data[self::S_PAYLOAD]))
                 $gen_data[self::S_PAYLOAD] = json_encode($gen_data[self::S_PAYLOAD]);
@@ -317,9 +318,9 @@ class MqttGen {
         }
         else
             $gen_data = null;
-            
+
             $this->logger->debug('-----');
-            
+
             return $gen_data;
     }
 
